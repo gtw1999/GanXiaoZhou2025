@@ -1,0 +1,181 @@
+clear all
+blue = [0 0.4470 0.7410];
+red = [0.6350 0.0780 0.1840];
+purple = [.63,.13,.94];
+att = red;
+rep = blue;
+green = [0.4660 0.6740 0.1880];
+syms x y z real
+syms alpha beta gamma real
+syms d1 d2 d3 real
+
+d = [d1, d2, d3];
+vf = [x*(alpha-alpha*x-(alpha+beta+d1)*y+d2*z);
+    y*(beta+d1*x-beta*y-(beta+gamma+d3)*z);
+    z*(gamma-(gamma+alpha+d2)*x+d3*y-gamma*z)] %system (1.4)
+F = [x;y;z;x+y+z-1]
+K = F;
+for i = 1:size(F,1)
+    K(i) = collect(simplify(gradient(F(i),[x,y,z]).'*vf/F(i)),[x,y,z]);
+end
+K
+
+
+sp = solve(vf); sp = [sp.x,sp.y,sp.z]
+%%
+num = [-2,1,1,0,3,0] %parameters
+
+vfi = subs(vf,[alpha,beta,gamma,d],num)
+
+spi = solve(vfi);  spi = [spi.x,spi.y,spi.z] %equilibra
+
+J = jacobian(vfi,[x,y,z]) %Jacobian matrix
+temp = [];
+for i = 1:size(spi,1)
+    if min(spi(i,:)) >= 0
+        temp = [temp;i];
+    end
+end
+spi = spi(temp,:)
+lam = [];
+ji = jacobian(vfi,[x,y,z]);
+attP = []; repP = [];
+for i = 1:size(spi,1)
+    disp('------------------------------------------')
+    spi(i,:),jii = subs(ji,[x,y,z],spi(i,:));
+    lam = double(expand(eig(jii)))
+    if lam < 0
+        attP = [attP,i];
+    elseif lam > 0
+        repP = [repP, i];
+    end
+end
+
+%% 
+% 
+
+%determine the invariant surface
+spi = double(spi)
+H1 = x*y*z;
+L = [0.5-0.5*z; 1-2*z]
+
+A2 = -6*z^2 + 6*z - 1;
+resz = solve(A2),double(resz)
+zba = resz(resz<2/4)
+pba = [subs(L,z,zba)',zba]
+c2 = subs(H1, [x,y,z], pba)
+s = spi(end,:)
+
+%plot intersections
+warning('off');
+axisrange = [0,3.5,0,3.5,0,1.3];
+figure; hold on;
+
+space = linspace(0,1,100);
+plot3(zeros(1,100),space*axisrange(4),zeros(1,100),'k--','linewidth',1.2);
+plot3(zeros(1,100),zeros(1,100),space*axisrange(6),'k--','linewidth',1.2);
+plot3(space*axisrange(2),zeros(1,100),zeros(1,100),'k--','linewidth',1.2);
+text('Interpreter','latex','String','$O$','Position',[0,-0.2,-0.2], 'FontSize',20);
+text('Interpreter','latex','String','$x_1$','Position',[axisrange(2)+.2,-.2,0.05],'FontSize',15);
+text('Interpreter','latex','String','$x_2$','Position',[-.2,axisrange(4)-.01,0.14],'FontSize',15);
+text('Interpreter','latex','String','$x_3$','Position',[0,-0.3,axisrange(6)],'FontSize',15);
+
+
+zi = linspace(-1,1,100);
+xy = subs(L,z,zi);
+
+plot3(xy(1,:),xy(2,:),zi,'k','LineWidth',.8)
+plot3(pba(1),pba(2),pba(3),'o','markerSize',5,'MarkerFaceColor',green,'MarkerEdgeColor',green)
+
+
+double(c2)
+fimplicit3(H1-c2,[0,2,0,2,0,2],'FaceColor',blue,'FaceAlpha',.3,'LineStyle',"none")
+double(pba)
+
+view(60,-10)
+
+axis equal; axis off;
+axis(axisrange);
+hold off
+print('-dpng','-r300','fig2.3(iii)_1.png');
+
+
+%% 
+% 
+
+%plot phase portrait
+warning('off');
+axisrange = [0,3.5,0,3.5,0,1.3];
+figure; hold on;
+space = linspace(0,1,100);
+plot3(zeros(1,100),space*axisrange(4),zeros(1,100),'k--','linewidth',1.2);
+plot3(zeros(1,100),zeros(1,100),space*axisrange(6),'k--','linewidth',1.2);
+plot3(space*axisrange(2),zeros(1,100),zeros(1,100),'k--','linewidth',1.2);
+text('Interpreter','latex','String','$O$','Position',[0,-0.2,-0.2], 'FontSize',20);
+text('Interpreter','latex','String','$x_1$','Position',[axisrange(2)+.2,-.2,0.05],'FontSize',15);
+text('Interpreter','latex','String','$x_2$','Position',[-.2,axisrange(4)-.01,0.14],'FontSize',15);
+text('Interpreter','latex','String','$x_3$','Position',[0,-0.3,axisrange(6)],'FontSize',15);
+
+fill3([1,0,0],[0,1,0],[0,0,1],'--','FaceColor',[0.93,0.91,0.91],...
+    'FaceAlpha',.6,'EdgeLighting',"none") %invariant 2-simplex
+
+
+the = linspace(0,pi/2,100); [th1,th2] = meshgrid(the,the);
+
+xi = linspace(0,1,100);
+plot3(xi,1-xi,zeros(1,100),'k','LineWidth',1.2)
+plot3(zeros(1,100),xi,1-xi,'k','LineWidth',1.2)
+plot3(xi,zeros(1,100),1-xi,'k','LineWidth',1.2)
+
+plot3(pba(1),pba(2),pba(3),'o','markerSize',5,'MarkerFaceColor',green,'MarkerEdgeColor',green)
+
+fimplicit3(H1-c2,[0,2,0,2,0,2],'FaceColor',blue,'FaceAlpha',.3,'LineStyle',"none") %H1=C
+double(pba)
+
+%plot phase trajectories
+p0 = [0.39,0.5774,0.21];
+res = double(solve(subs(H1.^2-c2^2,[x,z],p0([1,3])),y));
+p0(2) = res(2); [~,Y] = ode45(@df,[0,350],p0); i = 44; i1=1;
+plot3(Y(i1:i,1),Y(i1:i,2),Y(i1:i,3),'color',red,'linewidth',1.2);
+[~,Y] = ode45(@df_pos,[0,1000],p0); i = 29; i1 = 1;
+plot3(Y(i1:i,1),Y(i1:i,2),Y(i1:i,3),'color',red,'linewidth',1.2);
+
+p0 = [0.30,0.539,0.4];
+res = double(solve(subs(H1.^2-c2^2,[x,z],p0([1,3])),y));
+p0(2) = res(2); [~,Y] = ode45(@df,[0,25],p0); i1 = 1; i2 = 27;
+plot3(Y(i1:i2,1),Y(i1:i2,2),Y(i1:i2,3),'color',red,'linewidth',1.2);
+[~,Y] = ode45(@df_pos,[0,35],p0); i1 = 1; i2 =19;
+plot3(Y(i1:i2,1),Y(i1:i2,2),Y(i1:i2,3),'color',red,'linewidth',1.2);
+
+p0 = [0.3,0.01,0.07];
+res = double(solve(subs(H1.^2-c2^2,[x,z],p0([1,3])),y));
+p0(2) = res(2); [~,Y] = ode45(@df,[0,20],p0); i1 = 4; i2 = 27;
+plot3(Y(i1:i2,1),Y(i1:i2,2),Y(i1:i2,3),'color',red,'linewidth',1.2);
+
+view(80,20)
+
+axis equal; axis off;
+axis(axisrange);
+hold off
+print('-dpng','-r300','fig2.3(iii)_2.png');
+%%
+function vf = df(~,xyz)
+x = xyz(1); y = xyz(2); z = xyz(3);
+num = [-2,1,1,0,3,0];
+alpha = num(1); beta = num(2); gamma = num(3);
+d1 = num(4); d2 = num(5); d3 = num(6);
+vf = [x*(alpha-alpha*x-(alpha+beta+d1)*y+d2*z);
+    y*(beta+d1*x-beta*y-(beta+gamma+d3)*z);
+    z*(gamma-(gamma+alpha+d2)*x+d3*y-gamma*z)];
+end
+
+
+function vf = df_pos(~,xyz)
+x = xyz(1); y = xyz(2); z = xyz(3);
+num = -[-2,1,1,0,3,0];
+alpha = num(1); beta = num(2); gamma = num(3);
+d1 = num(4); d2 = num(5); d3 = num(6);
+vf = [x*(alpha-alpha*x-(alpha+beta+d1)*y+d2*z);
+    y*(beta+d1*x-beta*y-(beta+gamma+d3)*z);
+    z*(gamma-(gamma+alpha+d2)*x+d3*y-gamma*z)];
+end
