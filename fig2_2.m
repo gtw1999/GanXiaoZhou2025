@@ -122,7 +122,7 @@ view(80,20)
 axis equal; axis off;
 axis(axisrange);
 hold off
-print('-dpng','-r300','fig2.2.png');
+print('-dpng','-r300','fig2_2.png');
 %%
 function vf = df(~,xyz)
 x = xyz(1); y = xyz(2); z = xyz(3);

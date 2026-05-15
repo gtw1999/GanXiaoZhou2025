@@ -69,7 +69,7 @@ c2 = subs(H1, [x,y,z], pba)
 s = spi(end,:) 
 %% 
 
-%plot intersections
+%%plot intersections
 warning('off');
 axisrange = [0,3.5,0,3.5,0,1.3];
 figure; hold on;
@@ -97,7 +97,7 @@ for i = 1:size(HL2,1)
     end
 end
 pc0
-plot3(pc0(:,1),pc0(:,2),pc0(:,3),'o','markerSize',5,'MarkerFaceColor',green,'MarkerEdgeColor',green)
+plot3(pc0(:,1),pc0(:,2),pc0(:,3),'o','markerSize',5,'MarkerFaceColor',red,'MarkerEdgeColor',red)
 
 zi = linspace(-1,min(pc0(:,3)),100);
 xy = subs(L,z,zi);
@@ -116,11 +116,13 @@ axis equal; axis off;
 axis(axisrange);
 
 hold off
-print('-dpng','-r300','fig2.3(i)_1.png');
+ax = gca;
+exportgraphics(ax, 'fig2_3(i)_1.png', 'Resolution', 300);
+
 %% 
 % 
 
-%plot phase portrait
+%%plot phase portrait
 warning('off');
 axisrange = [0,3.5,0,3.5,0,1.3];
 figure; hold on;
@@ -161,8 +163,8 @@ for i = 1:size(HL2,1)
     end
 end
 pc0
-plot3(pc0(:,1),pc0(:,2),pc0(:,3),'o','markerSize',5,'MarkerFaceColor',green,'MarkerEdgeColor',green)
-
+plot3(pc0(:,1),pc0(:,2),pc0(:,3),'o','markerSize',5,'MarkerFaceColor',red,'MarkerEdgeColor',red)
+%plot phase trajectories
 p0 = [0.4,0.2,0.2]; 
 res = double(solve(subs(H1.^2-ck^2,[x,z],p0([1,3])),y));
 p0(2) = res(2);
@@ -200,7 +202,262 @@ view(80,20)
 axis equal; axis off;
 axis(axisrange);
 hold off
-print('-dpng','-r300','fig2.3(i)_2.png');
+ax = gca;
+exportgraphics(ax, 'fig2_3(i)_2.png', 'Resolution', 300);
+
+
+%%plot phase trajectories on different surfaces
+warning('off');
+axisrange = [0,3.5,0,3.5,0,1.3];
+figure; hold on;
+
+space = linspace(0,1,100);
+plot3(zeros(1,100),space*axisrange(4),zeros(1,100),'k--','linewidth',1.2);
+plot3(zeros(1,100),zeros(1,100),space*axisrange(6),'k--','linewidth',1.2);
+plot3(space*axisrange(2),zeros(1,100),zeros(1,100),'k--','linewidth',1.2);
+text('Interpreter','latex','String','$O$','Position',[0,-0.2,-0.2], 'FontSize',20);
+text('Interpreter','latex','String','$x_1$','Position',[axisrange(2)+.2,-.2,0.05],'FontSize',15);
+text('Interpreter','latex','String','$x_2$','Position',[-.2,axisrange(4)-.01,0.14],'FontSize',15);
+text('Interpreter','latex','String','$x_3$','Position',[0,-0.3,axisrange(6)],'FontSize',15);
+
+the = linspace(0,pi/2,100); [th1,th2] = meshgrid(the,the);
+
+sp_ = [double(spi)];%eye(3)*2];
+
+ck = (c1+c2)/2;
+
+plot3(pc0(:,1),pc0(:,2),pc0(:,3),'o','markerSize',5,'MarkerFaceColor',red,'MarkerEdgeColor',red)
+
+p0 = [0.4,0.2,0.2]; 
+res = double(solve(subs(H1.^2-ck^2,[x,z],p0([1,3])),y));
+p0(2) = res(2);
+[~,Y] = ode45(@df,[0,30],p0);
+plot3(Y(:,1),Y(:,2),Y(:,3),'color',red,'linewidth',1.2)
+
+p0 = [0.4,0.2,0.17]; 
+res = double(solve(subs(H1.^2-ck^2,[x,z],p0([1,3])),y));
+p0(2) = res(2);
+[~,Y] = ode45(@df,[0,30],p0);
+plot3(Y(:,1),Y(:,2),Y(:,3),'color',red,'linewidth',1.2)
+
+p0 = [0.4,0.2,0.23]; 
+res = double(solve(subs(H1.^2-ck^2,[x,z],p0([1,3])),y));
+p0(2) = res(2);
+[~,Y] = ode45(@df,[0,30],p0);
+plot3(Y(:,1),Y(:,2),Y(:,3),'color',red,'linewidth',1.2)
+
+p0 = [0.4,0.2,0.27]; 
+res = double(solve(subs(H1.^2-ck^2,[x,z],p0([1,3])),y));
+p0(2) = res(2);
+[~,Y] = ode45(@df,[0,30],p0);
+plot3(Y(:,1),Y(:,2),Y(:,3),'color',red,'linewidth',1.2)
+
+p0 = [0.4,0.2,0.28]; 
+res = double(solve(subs(H1.^2-ck^2,[x,z],p0([1,3])),y));
+p0(2) = res(2);
+[~,Y] = ode45(@df,[0,30],p0);
+plot3(Y(:,1),Y(:,2),Y(:,3),'color',red,'linewidth',1.2)
+
+p0 = [0.4,0.2,0.3]; 
+res = double(solve(subs(H1.^2-ck^2,[x,z],p0([1,3])),y));
+p0(2) = res(2);
+[~,Y] = ode45(@df,[0,30],p0);
+plot3(Y(:,1),Y(:,2),Y(:,3),'color',red,'linewidth',1.2)
+
+p0 = [0.4,0.2,0.4]; 
+res = double(solve(subs(H1.^2-ck^2,[x,z],p0([1,3])),y));
+p0(2) = res(2);
+[~,Y] = ode45(@df,[0,30],p0);
+plot3(Y(:,1),Y(:,2),Y(:,3),'color',red,'linewidth',1.2)
+[~,Y] = ode45(@df_pos,[0,30],p0);
+plot3(Y(:,1),Y(:,2),Y(:,3),'color',red,'linewidth',1.2)
+
+p0 = [0.4,0.2,0.5]; 
+res = double(solve(subs(H1.^2-ck^2,[x,z],p0([1,3])),y));
+p0(2) = res(2);
+[~,Y] = ode45(@df,[0,30],p0);
+plot3(Y(:,1),Y(:,2),Y(:,3),'color',red,'linewidth',1.2)
+[~,Y] = ode45(@df_pos,[0,30],p0);
+plot3(Y(:,1),Y(:,2),Y(:,3),'color',red,'linewidth',1.2)
+
+p0 = [0.4,0.2,0.6]; 
+res = double(solve(subs(H1.^2-ck^2,[x,z],p0([1,3])),y));
+p0(2) = res(2);
+[~,Y] = ode45(@df,[0,30],p0);
+plot3(Y(:,1),Y(:,2),Y(:,3),'color',red,'linewidth',1.2)
+[~,Y] = ode45(@df_pos,[0,30],p0);
+plot3(Y(:,1),Y(:,2),Y(:,3),'color',red,'linewidth',1.2)
+
+p0 = [0.4,0.2,0.75]; 
+res = double(solve(subs(H1.^2-ck^2,[x,z],p0([1,3])),y));
+p0(2) = res(2);
+[~,Y] = ode45(@df,[0,20],p0);
+plot3(Y(:,1),Y(:,2),Y(:,3),'color',red,'linewidth',1.2)
+[~,Y] = ode45(@df_pos,[0,20],p0);
+plot3(Y(:,1),Y(:,2),Y(:,3),'color',red,'linewidth',1.2)
+
+p0 = [0.4,0.2,0.4]; 
+res = double(solve(subs(H1.^2-ck^2,[x,z],p0([1,3])),y));
+p0(2) = res(2);
+[~,Y] = ode45(@df,[0,20],p0);
+plot3(Y(:,1),Y(:,2),Y(:,3),'color',red,'linewidth',1.2)
+[~,Y] = ode45(@df_pos,[0,20],p0);
+plot3(Y(:,1),Y(:,2),Y(:,3),'color',red,'linewidth',1.2)
+
+p0 = [1.2,2,.07];
+res = double(solve(subs(H1.^2-ck^2,[x,z],p0([1,3])),y));
+p0(2) = res(2);
+[~,Y] = ode45(@df,[0,20],p0);
+plot3(Y(:,1),Y(:,2),Y(:,3),'color',red,'linewidth',1.2)
+[~,Y] = ode45(@df_pos,[0,20],p0);
+plot3(Y(:,1),Y(:,2),Y(:,3),'color',red,'linewidth',1.2)
+
+p0 = [0.45,2,0.11];
+res = double(solve(subs(H1.^2-ck^2,[x,z],p0([1,3])),y));
+p0(2) = res(2);
+[~,Y] = ode45(@df,[0,30],p0);
+plot3(Y(:,1),Y(:,2),Y(:,3),'color',red,'linewidth',1.2)
+[~,Y] = ode45(@df_pos,[0,30],p0);
+plot3(Y(:,1),Y(:,2),Y(:,3),'color',red,'linewidth',1.2)
+
+p0 = [0.587,2.119,0.06];
+res = double(solve(subs(H1.^2-ck^2,[x,z],p0([1,3])),y));
+p0(2) = res(2);
+[~,Y] = ode45(@df,[0,20],p0);
+plot3(Y(:,1),Y(:,2),Y(:,3),'color',red,'linewidth',1.2)
+[~,Y] = ode45(@df_pos,[0,20],p0);
+plot3(Y(:,1),Y(:,2),Y(:,3),'color',red,'linewidth',1.2)
+
+p0 = [0.587,2.119,0.04];
+res = double(solve(subs(H1.^2-ck^2,[x,z],p0([1,3])),y));
+p0(2) = res(2);
+[~,Y] = ode45(@df,[0,20],p0);
+plot3(Y(:,1),Y(:,2),Y(:,3),'color',red,'linewidth',1.2)
+[~,Y] = ode45(@df_pos,[0,20],p0);
+plot3(Y(:,1),Y(:,2),Y(:,3),'color',red,'linewidth',1.2)
+
+p0 = [0.587,2.119,0.03];
+res = double(solve(subs(H1.^2-ck^2,[x,z],p0([1,3])),y));
+p0(2) = res(2);
+[~,Y] = ode45(@df,[0,20],p0);
+plot3(Y(:,1),Y(:,2),Y(:,3),'color',red,'linewidth',1.2)
+[~,Y] = ode45(@df_pos,[0,20],p0);
+plot3(Y(:,1),Y(:,2),Y(:,3),'color',red,'linewidth',1.2)
+
+ck = (ck-0.025);
+res = double(solve(subs(H1^2-ck^2,[x;y],L),z));
+HL2 = double(subs([L',z],z,res))
+pc0 = zeros(2,3);
+j = 0;
+for i = 1:size(HL2,1)
+    if HL2(i,:) > 0
+        j = j + 1;
+        pc0(j,:) = HL2(i,:);
+    end
+end
+pc0
+plot3(pc0(:,1),pc0(:,2),pc0(:,3),'o','markerSize',5,'MarkerFaceColor',green,'MarkerEdgeColor',green)
+
+
+p0 = [0.6,2,0.2];
+res = double(solve(subs(H1.^2-ck^2,[x,z],p0([1,3])),y));
+p0(2) = res(2);
+[~,Y] = ode45(@df,[0,20],p0);
+plot3(Y(:,1),Y(:,2),Y(:,3),'color',green,'linewidth',1.2)
+[~,Y] = ode45(@df_pos,[0,20],p0);
+plot3(Y(:,1),Y(:,2),Y(:,3),'color',green,'linewidth',1.2)
+
+p0 = [0.6,2,0.38];
+res = double(solve(subs(H1.^2-ck^2,[x,z],p0([1,3])),y));
+p0(2) = res(2);
+[~,Y] = ode45(@df,[0,30],p0);
+plot3(Y(:,1),Y(:,2),Y(:,3),'color',green,'linewidth',1.2)
+[~,Y] = ode45(@df_pos,[0,30],p0);
+plot3(Y(:,1),Y(:,2),Y(:,3),'color',green,'linewidth',1.2)
+
+p0 = [0.6,2,0.38];
+res = double(solve(subs(H1.^2-ck^2,[x,z],p0([1,3])),y));
+p0(2) = res(2);
+[~,Y] = ode45(@df,[0,30],p0);
+plot3(Y(:,1),Y(:,2),Y(:,3),'color',green,'linewidth',1.2)
+[~,Y] = ode45(@df_pos,[0,30],p0);
+plot3(Y(:,1),Y(:,2),Y(:,3),'color',green,'linewidth',1.2)
+
+p0 = [0.6,2,0.345];
+res = double(solve(subs(H1.^2-ck^2,[x,z],p0([1,3])),y));
+p0(2) = res(2);
+[~,Y] = ode45(@df,[0,30],p0);
+plot3(Y(:,1),Y(:,2),Y(:,3),'color',green,'linewidth',1.2)
+[~,Y] = ode45(@df_pos,[0,30],p0);
+plot3(Y(:,1),Y(:,2),Y(:,3),'color',green,'linewidth',1.2)
+
+p0 = [0.6,2,0.45];
+res = double(solve(subs(H1.^2-ck^2,[x,z],p0([1,3])),y));
+p0(2) = res(2);
+[~,Y] = ode45(@df,[0,30],p0);
+plot3(Y(:,1),Y(:,2),Y(:,3),'color',green,'linewidth',1.2)
+[~,Y] = ode45(@df_pos,[0,30],p0);
+plot3(Y(:,1),Y(:,2),Y(:,3),'color',green,'linewidth',1.2)
+
+p0 = [0.6,2,0.5];
+res = double(solve(subs(H1.^2-ck^2,[x,z],p0([1,3])),y));
+p0(2) = res(2);
+[~,Y] = ode45(@df,[0,30],p0);
+plot3(Y(:,1),Y(:,2),Y(:,3),'color',green,'linewidth',1.2)
+[~,Y] = ode45(@df_pos,[0,30],p0);
+plot3(Y(:,1),Y(:,2),Y(:,3),'color',green,'linewidth',1.2)
+
+p0 = [0.6,2,0.1];
+res = double(solve(subs(H1.^2-ck^2,[x,z],p0([1,3])),y));
+p0(2) = res(2);
+[~,Y] = ode45(@df,[0,20],p0);
+plot3(Y(:,1),Y(:,2),Y(:,3),'color',green,'linewidth',1.2)
+[~,Y] = ode45(@df_pos,[0,20],p0);
+plot3(Y(:,1),Y(:,2),Y(:,3),'color',green,'linewidth',1.2)
+
+p0 = [0.487,2.119,0.015];
+res = double(solve(subs(H1.^2-ck^2,[x,z],p0([1,3])),y));
+p0(2) = res(2);
+[~,Y] = ode45(@df,[0,20],p0);
+plot3(Y(:,1),Y(:,2),Y(:,3),'color',green,'linewidth',1.2)
+[~,Y] = ode45(@df_pos,[0,20],p0);
+plot3(Y(:,1),Y(:,2),Y(:,3),'color',green,'linewidth',1.2)
+
+p0 = [0.487,2.119,0.01];
+res = double(solve(subs(H1.^2-ck^2,[x,z],p0([1,3])),y));
+p0(2) = res(2);
+[~,Y] = ode45(@df,[0,20],p0);
+plot3(Y(:,1),Y(:,2),Y(:,3),'color',green,'linewidth',1.2)
+[~,Y] = ode45(@df_pos,[0,20],p0);
+plot3(Y(:,1),Y(:,2),Y(:,3),'color',green,'linewidth',1.2)
+
+p0 = [0.487,2.119,0.007];
+res = double(solve(subs(H1.^2-ck^2,[x,z],p0([1,3])),y));
+p0(2) = res(2);
+[~,Y] = ode45(@df,[0,20],p0);
+plot3(Y(:,1),Y(:,2),Y(:,3),'color',green,'linewidth',1.2)
+[~,Y] = ode45(@df_pos,[0,20],p0);
+plot3(Y(:,1),Y(:,2),Y(:,3),'color',green,'linewidth',1.2)
+
+p0 = [0.487,2.119,0.028173];
+res = double(solve(subs(H1.^2-ck^2,[x,z],p0([1,3])),y));
+p0(2) = res(2);
+[~,Y] = ode45(@df,[0,20],p0);
+plot3(Y(:,1),Y(:,2),Y(:,3),'color',green,'linewidth',1.2)
+[~,Y] = ode45(@df_pos,[0,100],p0);
+plot3(Y(:,1),Y(:,2),Y(:,3),'color',green,'linewidth',1.2)
+
+view(70,20)
+
+axis equal; axis off;
+axis(axisrange);
+hold off
+ax = gca;
+exportgraphics(ax, 'fig2_3(i)_3.png', 'Resolution', 300);
+
+
+
+
 %%
 function vf = df(~,xyz)
 x = xyz(1); y = xyz(2); z = xyz(3);

@@ -22,7 +22,6 @@ K
 
 
 sp = solve(vf); sp = [sp.x,sp.y,sp.z]
-
 %%
 num = [-2,1,1,0,3,0] %parameters
 
@@ -63,12 +62,11 @@ L = [0.5-0.5*z; 1-2*z]
 A2 = -6*z^2 + 6*z - 1;
 resz = solve(A2),double(resz)
 zba = resz(resz<2/4)
-pba = [subs(L,z,zba)',zba] 
+pba = [subs(L,z,zba)',zba]
 c2 = subs(H1, [x,y,z], pba)
 s = spi(end,:)
 
-
-%plot intersections
+%%plot intersections
 warning('off');
 axisrange = [0,3.5,0,3.5,0,1.3];
 figure; hold on;
@@ -82,27 +80,34 @@ text('Interpreter','latex','String','$x_1$','Position',[axisrange(2)+.2,-.2,0.05
 text('Interpreter','latex','String','$x_2$','Position',[-.2,axisrange(4)-.01,0.14],'FontSize',15);
 text('Interpreter','latex','String','$x_3$','Position',[0,-0.3,axisrange(6)],'FontSize',15);
 
+
 zi = linspace(-1,1,100);
 xy = subs(L,z,zi);
 
 plot3(xy(1,:),xy(2,:),zi,'k','LineWidth',.8)
+plot3(pba(1),pba(2),pba(3),'o','markerSize',5,'MarkerFaceColor',red,'MarkerEdgeColor',red)
 
 
-ck = c2+.1
-fimplicit3(H1-ck,[0,2,0,2,0,2],'FaceColor',blue,'FaceAlpha',.3,'LineStyle',"none") %surface H1=C
+double(c2)
+fimplicit3(H1-c2,[0,2,0,2,0,2],'FaceColor',blue,'FaceAlpha',.3,'LineStyle',"none")
+double(pba)
 
 view(60,-10)
+
 axis equal; axis off;
 axis(axisrange);
 hold off
-print('-dpng','-r300','fig2.3(ii)_1.png');
+ax = gca;
+exportgraphics(ax, 'fig2_3(ii)_1.png', 'Resolution', 300);
+
+
 %% 
 % 
 
-%plot phase portrait
+%%plot phase portrait
+warning('off');
 axisrange = [0,3.5,0,3.5,0,1.3];
 figure; hold on;
-
 space = linspace(0,1,100);
 plot3(zeros(1,100),space*axisrange(4),zeros(1,100),'k--','linewidth',1.2);
 plot3(zeros(1,100),zeros(1,100),space*axisrange(6),'k--','linewidth',1.2);
@@ -112,39 +117,156 @@ text('Interpreter','latex','String','$x_1$','Position',[axisrange(2)+.2,-.2,0.05
 text('Interpreter','latex','String','$x_2$','Position',[-.2,axisrange(4)-.01,0.14],'FontSize',15);
 text('Interpreter','latex','String','$x_3$','Position',[0,-0.3,axisrange(6)],'FontSize',15);
 
-
 fill3([1,0,0],[0,1,0],[0,0,1],'--','FaceColor',[0.93,0.91,0.91],...
     'FaceAlpha',.6,'EdgeLighting',"none") %invariant 2-simplex
+
+
+the = linspace(0,pi/2,100); [th1,th2] = meshgrid(the,the);
 
 xi = linspace(0,1,100);
 plot3(xi,1-xi,zeros(1,100),'k','LineWidth',1.2)
 plot3(zeros(1,100),xi,1-xi,'k','LineWidth',1.2)
 plot3(xi,zeros(1,100),1-xi,'k','LineWidth',1.2)
 
-ck = c2+.1
-fimplicit3(H1-ck,[0,2,0,2,0,2],'FaceColor',blue,'FaceAlpha',.3,'LineStyle',"none") %H1=C
+plot3(pba(1),pba(2),pba(3),'o','markerSize',5,'MarkerFaceColor',red,'MarkerEdgeColor',red)
+
+fimplicit3(H1-c2,[0,2,0,2,0,2],'FaceColor',blue,'FaceAlpha',.3,'LineStyle',"none") %H1=C
+double(pba)
 
 %plot phase trajectories
-p0 = [0.1,0.1,0.5];
-res = double(solve(subs(H1.^2-ck^2,[x,z],p0([1,3])),y));
-p0(2) = res(2);
-[~,Y] = ode45(@df,[0,4],p0); i = 7; i1 = 33;
-plot3(Y(i:i1,1),Y(i:i1,2),Y(i:i1,3),'color',red,'linewidth',1.2)
+p0 = [0.39,0.5774,0.21];
+res = double(solve(subs(H1.^2-c2^2,[x,z],p0([1,3])),y));
+p0(2) = res(2); [~,Y] = ode45(@df,[0,350],p0); i = 44; i1=1;
+plot3(Y(i1:i,1),Y(i1:i,2),Y(i1:i,3),'color',red,'linewidth',1.2);
+[~,Y] = ode45(@df_pos,[0,1000],p0); i = 29; i1 = 1;
+plot3(Y(i1:i,1),Y(i1:i,2),Y(i1:i,3),'color',red,'linewidth',1.2);
 
-p0 = [0.2,0.1,0.3];
-res = double(solve(subs(H1.^2-ck^2,[x,z],p0([1,3])),y));
-p0(2) = res(2);
-[~,Y] = ode45(@df,[0,10],p0); i = 27;i1=5;
-plot3(Y(i1:i,1),Y(i1:i,2),Y(i1:i,3),'color',red,'linewidth',1.2)
+p0 = [0.30,0.539,0.4];
+res = double(solve(subs(H1.^2-c2^2,[x,z],p0([1,3])),y));
+p0(2) = res(2); [~,Y] = ode45(@df,[0,25],p0); i1 = 1; i2 = 27;
+plot3(Y(i1:i2,1),Y(i1:i2,2),Y(i1:i2,3),'color',red,'linewidth',1.2);
+[~,Y] = ode45(@df_pos,[0,35],p0); i1 = 1; i2 =19;
+plot3(Y(i1:i2,1),Y(i1:i2,2),Y(i1:i2,3),'color',red,'linewidth',1.2);
+
+p0 = [0.3,0.01,0.07];
+res = double(solve(subs(H1.^2-c2^2,[x,z],p0([1,3])),y));
+p0(2) = res(2); [~,Y] = ode45(@df,[0,20],p0); i1 = 4; i2 = 27;
+plot3(Y(i1:i2,1),Y(i1:i2,2),Y(i1:i2,3),'color',red,'linewidth',1.2);
 
 view(80,20)
+
 axis equal; axis off;
 axis(axisrange);
 hold off
-print('-dpng','-r300','fig2.3(ii)_2.png');
-%% 
-% 
+ax = gca;
+exportgraphics(ax, 'fig2_3(ii)_2.png', 'Resolution', 300);
 
+
+
+%%plot more phase trajectories
+warning('off');
+axisrange = [0,3.5,0,3.5,0,1.3];
+figure; hold on;
+space = linspace(0,1,100);
+plot3(zeros(1,100),space*axisrange(4),zeros(1,100),'k--','linewidth',1.2);
+plot3(zeros(1,100),zeros(1,100),space*axisrange(6),'k--','linewidth',1.2);
+plot3(space*axisrange(2),zeros(1,100),zeros(1,100),'k--','linewidth',1.2);
+text('Interpreter','latex','String','$O$','Position',[0,-0.2,-0.2], 'FontSize',20);
+text('Interpreter','latex','String','$x_1$','Position',[axisrange(2)+.2,-.2,0.05],'FontSize',15);
+text('Interpreter','latex','String','$x_2$','Position',[-.2,axisrange(4)-.01,0.14],'FontSize',15);
+text('Interpreter','latex','String','$x_3$','Position',[0,-0.3,axisrange(6)],'FontSize',15);
+plot3(pba(1),pba(2),pba(3),'o','markerSize',5,'MarkerFaceColor',green,'MarkerEdgeColor',green)
+
+p0 = [0.39,0.5774,0.21];
+res = double(solve(subs(H1.^2-c2^2,[x,z],p0([1,3])),y));
+p0(2) = res(2); 
+[~,Y] = ode45(@df,[0,50],p0); 
+plot3(Y(:,1),Y(:,2),Y(:,3),'color',red,'linewidth',1.2);
+[~,Y] = ode45(@df_pos,[0,50],p0); 
+plot3(Y(:,1),Y(:,2),Y(:,3),'color',red,'linewidth',1.2);
+
+p0 = [0.30,0.539,0.4];
+res = double(solve(subs(H1.^2-c2^2,[x,z],p0([1,3])),y));
+p0(2) = res(2); 
+[~,Y] = ode45(@df,[0,50],p0); 
+plot3(Y(:,1),Y(:,2),Y(:,3),'color',red,'linewidth',1.2);
+[~,Y] = ode45(@df_pos,[0,50],p0); 
+plot3(Y(:,1),Y(:,2),Y(:,3),'color',red,'linewidth',1.2);
+
+p0 = [0.30,0.539,0.5];
+res = double(solve(subs(H1.^2-c2^2,[x,z],p0([1,3])),y));
+p0(2) = res(2); 
+[~,Y] = ode45(@df,[0,50],p0); 
+plot3(Y(:,1),Y(:,2),Y(:,3),'color',red,'linewidth',1.2);
+[~,Y] = ode45(@df_pos,[0,50],p0); 
+plot3(Y(:,1),Y(:,2),Y(:,3),'color',red,'linewidth',1.2);
+
+p0 = [0.30,0.539,0.6];
+res = double(solve(subs(H1.^2-c2^2,[x,z],p0([1,3])),y));
+p0(2) = res(2); 
+[~,Y] = ode45(@df,[0,50],p0); 
+plot3(Y(:,1),Y(:,2),Y(:,3),'color',red,'linewidth',1.2);
+[~,Y] = ode45(@df_pos,[0,50],p0); 
+plot3(Y(:,1),Y(:,2),Y(:,3),'color',red,'linewidth',1.2);
+
+p0 = [0.30,0.539,0.7];
+res = double(solve(subs(H1.^2-c2^2,[x,z],p0([1,3])),y));
+p0(2) = res(2); 
+[~,Y] = ode45(@df,[0,50],p0); 
+plot3(Y(:,1),Y(:,2),Y(:,3),'color',red,'linewidth',1.2);
+[~,Y] = ode45(@df_pos,[0,50],p0); 
+plot3(Y(:,1),Y(:,2),Y(:,3),'color',red,'linewidth',1.2);
+
+p0 = [0.30,0.539,0.8];
+res = double(solve(subs(H1.^2-c2^2,[x,z],p0([1,3])),y));
+p0(2) = res(2); 
+[~,Y] = ode45(@df,[0,50],p0); 
+plot3(Y(:,1),Y(:,2),Y(:,3),'color',red,'linewidth',1.2);
+[~,Y] = ode45(@df_pos,[0,50],p0); 
+plot3(Y(:,1),Y(:,2),Y(:,3),'color',red,'linewidth',1.2);
+
+p0 = [0.3,0.01,0.07];
+res = double(solve(subs(H1.^2-c2^2,[x,z],p0([1,3])),y));
+p0(2) = res(2);
+[~,Y] = ode45(@df,[0,50],p0); 
+plot3(Y(:,1),Y(:,2),Y(:,3),'color',red,'linewidth',1.2);
+[~,Y] = ode45(@df_pos,[0,50],p0); 
+plot3(Y(:,1),Y(:,2),Y(:,3),'color',red,'linewidth',1.2);
+
+p0 = [0.3,0.01,0.04];
+res = double(solve(subs(H1.^2-c2^2,[x,z],p0([1,3])),y));
+p0(2) = res(2); 
+[~,Y] = ode45(@df,[0,50],p0); 
+plot3(Y(:,1),Y(:,2),Y(:,3),'color',red,'linewidth',1.2);
+[~,Y] = ode45(@df_pos,[0,50],p0); 
+plot3(Y(:,1),Y(:,2),Y(:,3),'color',red,'linewidth',1.2);
+
+p0 = [0.3,0.01,0.02];
+res = double(solve(subs(H1.^2-c2^2,[x,z],p0([1,3])),y));
+p0(2) = res(2); 
+[~,Y] = ode45(@df,[0,50],p0); 
+plot3(Y(:,1),Y(:,2),Y(:,3),'color',red,'linewidth',1.2);
+[~,Y] = ode45(@df_pos,[0,50],p0); 
+plot3(Y(:,1),Y(:,2),Y(:,3),'color',red,'linewidth',1.2);
+
+p0 = [0.30,0.539,0.03];
+res = double(solve(subs(H1.^2-c2^2,[x,z],p0([1,3])),y));
+p0(2) = res(2); 
+[~,Y] = ode45(@df,[0,50],p0); 
+plot3(Y(:,1),Y(:,2),Y(:,3),'color',red,'linewidth',1.2);
+[~,Y] = ode45(@df_pos,[0,50],p0); 
+plot3(Y(:,1),Y(:,2),Y(:,3),'color',red,'linewidth',1.2);
+
+view(70,20)
+
+axis equal; axis off;
+axis(axisrange);
+hold off
+ax = gca;
+exportgraphics(ax, 'fig2_3(ii)_3.png', 'Resolution', 300);
+
+%%
+%%
 function vf = df(~,xyz)
 x = xyz(1); y = xyz(2); z = xyz(3);
 num = [-2,1,1,0,3,0];
